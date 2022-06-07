@@ -31,7 +31,7 @@ def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_lo
     history = defaultdict(list)
     
     for epoch in range(1, num_epochs + 1): 
-        gc.collect()
+
         print(f'Epoch {epoch}/{num_epochs}', end='')
         train_loss = train_one_epoch(model, optimizer, scheduler, 
                                            dataloader=train_loader, 

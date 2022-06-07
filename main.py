@@ -12,7 +12,7 @@ from src.dataloader import create_folds,get_mask_paths
 
 
 def main():
-    gc.collect()
+
     model = build_model()
     optimizer = optim.Adam(model.parameters(), lr=CFG.lr, weight_decay=CFG.wd)
     scheduler = fetch_scheduler(optimizer)
@@ -29,7 +29,7 @@ def main():
         #                 )
         train_loader, valid_loader = prepare_loaders(fold=fold,
                                     df = create_folds(get_mask_paths()),
-                                    debug=True)
+                                    debug=False)
         model     = build_model()
         optimizer = optim.Adam(model.parameters(), lr=CFG.lr, weight_decay=CFG.wd)
         scheduler = fetch_scheduler(optimizer)
