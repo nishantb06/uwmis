@@ -1,4 +1,4 @@
-import tqdm
+from tqdm import tqdm
 import gc
 
 import numpy as np
