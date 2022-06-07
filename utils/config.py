@@ -43,5 +43,5 @@ def set_seed(seed = 42):
     os.environ['PYTHONHASHSEED'] = str(seed)
     print('> SEEDING DONE')
 
-#this line will go in main
+#this line will go in main or doesnt have to if it prints seeding done.
 set_seed(CFG.seed)
