@@ -26,7 +26,7 @@ class CFG:
     n_accumulate  = max(1, 32//train_bs)
     n_fold        = 5
     num_classes   = 3
-    # device        = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device        = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def set_seed(seed = 42):
