@@ -1,6 +1,11 @@
 import utils.config as cfg
 import numpy as np
 import torch
+from src.dataloader import train_loader,valid_loader
 
-print(torch.tensor([1,2,3]))
-print(cfg.CFG.seed)
+def main():
+    imgs, msks = next(iter(train_loader))
+    print(imgs.size(), msks.size())
+
+if __name__=="__main__":
+    main()
