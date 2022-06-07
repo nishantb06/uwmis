@@ -39,7 +39,8 @@ def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_lo
         
         val_loss, val_scores = valid_one_epoch(model, valid_loader, 
                                                  device=CFG.device, 
-                                                 epoch=epoch)
+                                                 epoch=epoch,
+                                                 optimizer=optimizer)
         val_dice, val_jaccard = val_scores
     
         history['Train Loss'].append(train_loss)
