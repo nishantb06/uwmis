@@ -101,7 +101,7 @@ def get_transforms(train = True,cfg=None):
     if train==True:
         return data_transforms["train"] 
     else:
-        return data_transforms['test']
+        return data_transforms['valid']
 
 #change where this function is used also
 
