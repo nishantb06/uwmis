@@ -121,4 +121,4 @@ def prepare_loaders(fold,df,cfg, debug=False):
     
     return train_loader, valid_loader
 
-train_loader, valid_loader = prepare_loaders(fold=0,df = create_folds(get_mask_paths()),debug=True)
+# train_loader, valid_loader = prepare_loaders(fold=0,df = create_folds(get_mask_paths()),debug=True)
