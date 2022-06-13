@@ -18,7 +18,7 @@ def get_args_parser():
     parser = argparse.ArgumentParser('Set training/testing configuration', add_help=False)
 
     parser.add_argument('--seed',default=101,type=int)
-    parser.add_argument('--debug', default=True, type=bool)
+    parser.add_argument('--debug', default=False, type=bool)
 
     parser.add_argument('--comment',default="",type=str)
     parser.add_argument('--exp_name', default='Baselinev2', type=str)
