@@ -12,7 +12,7 @@ sr_ = Style.RESET_ALL
 import  numpy as np
 from src.train import train_one_epoch
 from src.test import valid_one_epoch
-from src.dataloader import train_loader,valid_loader
+
 from utils.config import CFG
 
 def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_loader, valid_loader,cfg):
