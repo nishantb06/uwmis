@@ -7,34 +7,30 @@ BASE_PATH  = '/kaggle/input/uw-madison-gi-tract-image-segmentation'
 
 class CFG:
 
-    def __init__(self,debug = True, exp_name = 'Baselinev2',
-                comment = 'unet-efficientnet_b1-224x224-aug2-split2', model_name = 'Unet',
-                backbone = 'efficientnet-b1', train_bs = 128,valid_bs = 256, epochs = 15,
-                lr = 2e-3, scheduler = 'CosineAnnealingLR',
-                min_lr = 1e-6, n_fold = 5,fold_no = 0,seed = 101) -> None:
+    def __init__(self,args) -> None:
 
-        self.seed          = seed
-        self.debug         = debug # set debug=False for Full Training
-        self.exp_name      = exp_name
-        self.comment       = comment
-        self.model_name    = model_name
-        self.backbone      = backbone
-        self.train_bs      = train_bs
-        self.valid_bs      = train_bs*2
+        self.seed          = args.seed
+        self.debug         = args.debug # set debug=False for Full Training
+        self.exp_name      = args.exp_name
+        self.comment       = args.comment
+        self.model_name    = args.model_name
+        self.backbone      = args.backbone
+        self.train_bs      = args.train_bs
+        self.valid_bs      = self.train_bs*2
         self.img_size      = [224, 224]
-        self.epochs        = epochs
-        self.lr            = lr
-        self.scheduler     = scheduler
-        self.min_lr        = min_lr
-        self.T_max         = int(30000/train_bs*epochs)+50
+        self.epochs        = args.epochs
+        self.lr            = args.lr
+        self.scheduler     = args.scheduler
+        self.min_lr        = 1e-6
+        self.T_max         = int(30000/self.train_bs*self.epochs)+50
         self.T_0           = 25
         self.warmup_epochs = 0
         self.wd            = 1e-6
-        self.n_accumulate  = max(1, 32//train_bs)
-        self.n_fold        = n_fold
+        self.n_accumulate  = max(1, 32//self.train_bs)
+        self.n_fold        = args.n_fold
         self.num_classes   = 3
         self.device        = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.fold_no       = fold_no
+        self.fold_no       = args.fold_no
 
 
 

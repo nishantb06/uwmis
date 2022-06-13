@@ -17,7 +17,7 @@ from src.dataloader import create_folds,get_mask_paths
 def get_args_parser():
     parser = argparse.ArgumentParser('Set training/testing configuration', add_help=False)
     parser.add_argument('--debug', default=True, type=bool)
-    parser.add_argument('--exp_name', default='UWMIS - Segmentation', type=str)
+    parser.add_argument('--exp_name', default='Baselinev2', type=str)
     parser.add_argument('--train_bs', default = 128, type= int)
     parser.add_argument('--lr',default=2e-3,type=float)
     parser.add_argument('--model_name',default="Unet",type=str)
@@ -27,13 +27,13 @@ def get_args_parser():
     parser.add_argument('--n_fold',default=5,type=int)
     parser.add_argument('--backbone',default='efficientnet-b1',type=str)
     parser.add_argument('--fold_no',default=0,type=int)
-    parser.add_argument('--seed',default=99,type=int)
+    parser.add_argument('--seed',default=101,type=int)
     
     return parser
 
 def main(args):
-
-    cfg = initialise_config(**args)
+    print(type(args),args.debug)
+    cfg = initialise_config(debug = args.debug)
     model = build_model(cfg)
     optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
     scheduler = fetch_scheduler(optimizer,cfg)
