@@ -12,7 +12,6 @@ sr_ = Style.RESET_ALL
 import  numpy as np
 from src.train import train_one_epoch
 from src.test import valid_one_epoch
-
 from utils.config import CFG
 
 def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_loader, valid_loader,cfg):
@@ -54,7 +53,7 @@ def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_lo
         #            "Valid Dice": val_dice,
         #            "Valid Jaccard": val_jaccard,
         #            "LR":scheduler.get_last_lr()[0]})
-        
+        print(f'Train Loss: {train_loss:0.4f} | Valid Loss: {val_loss:0.4f}')
         print(f'Valid Dice: {val_dice:0.4f} | Valid Jaccard: {val_jaccard:0.4f}')
         
         # deep copy the model
@@ -67,14 +66,14 @@ def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_lo
             # run.summary["Best Jaccard"] = best_jaccard
             # run.summary["Best Epoch"]   = best_epoch
             best_model_wts = copy.deepcopy(model.state_dict())
-            PATH = f"best_epoch-{fold:02d}.bin"
+            PATH = f"best_epoch-{cfg.model_name}-{cfg.backbone}-{fold:02d}-{cfg.seed}.bin"
             torch.save(model.state_dict(), PATH)
             # Save a model file from the current directory
             # wandb.save(PATH)
             print(f"Model Saved{sr_}")
             
         last_model_wts = copy.deepcopy(model.state_dict())
-        PATH = f"last_epoch-{fold:02d}.bin"
+        PATH = f"last_epoch-{cfg.model_name}-{cfg.backbone}-{fold:02d}-{cfg.seed}.bin"
         torch.save(model.state_dict(), PATH)
             
         print(); print()
