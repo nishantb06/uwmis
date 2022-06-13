@@ -55,7 +55,7 @@ def main(args):
 
         model     = build_model(cfg=cfg)
         optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
-        scheduler = fetch_scheduler(optimizer)
+        scheduler = fetch_scheduler(optimizer,cfg=cfg)
         model, history = run_training(model, optimizer, scheduler,
                                     device=cfg.device,
                                     num_epochs=cfg.epochs,fold=fold,
