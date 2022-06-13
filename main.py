@@ -19,7 +19,7 @@ def get_args_parser():
     parser.add_argument('--debug', default=True, type=bool)
     parser.add_argument('--exp_name', default='UWMIS - Segmentation', type=str)
     parser.add_argument('--train_bs', default = 128, type= int)
-    parser.add_argument('lr',default=2e-3,type=True)
+    parser.add_argument('lr',default=2e-3,type=float)
     parser.add_argument('model_name',default="Unet",type=str)
     parser.add_argument('comment',default="",type=str)
     parser.add_argument('scheduler',default='CosineAnnealingLR',type=str)
@@ -51,7 +51,7 @@ def main(args):
                                     df = create_folds(get_mask_paths(),cfg),
                                     debug=args.debug,
                                     cfg=cfg)
-                                    
+
         model     = build_model(cfg=cfg)
         optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
         scheduler = fetch_scheduler(optimizer)
