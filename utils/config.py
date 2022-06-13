@@ -11,9 +11,9 @@ class CFG:
                 comment = 'unet-efficientnet_b1-224x224-aug2-split2', model_name = 'Unet',
                 backbone = 'efficientnet-b1', train_bs = 128,valid_bs = 256, epochs = 15,
                 lr = 2e-3, scheduler = 'CosineAnnealingLR',
-                min_lr = 1e-6, n_fold = 5,fold_no = 0) -> None:
+                min_lr = 1e-6, n_fold = 5,fold_no = 0,seed = 101) -> None:
 
-        self.seed          = 101
+        self.seed          = seed
         self.debug         = debug # set debug=False for Full Training
         self.exp_name      = exp_name
         self.comment       = comment
@@ -37,6 +37,7 @@ class CFG:
         self.fold_no       = fold_no
 
 
+
 def set_seed(seed = 42):
     '''Sets the seed of the entire notebook so results are the same every time we run.
     This is for REPRODUCIBILITY.'''
@@ -55,6 +56,6 @@ def set_seed(seed = 42):
 
 def initialise_config(args):
     cfg = CFG(**args)
-    set_seed(CFG.seed)
+    set_seed(cfg.seed)
     return cfg
 

@@ -19,14 +19,15 @@ def get_args_parser():
     parser.add_argument('--debug', default=True, type=bool)
     parser.add_argument('--exp_name', default='UWMIS - Segmentation', type=str)
     parser.add_argument('--train_bs', default = 128, type= int)
-    parser.add_argument('lr',default=2e-3,type=float)
-    parser.add_argument('model_name',default="Unet",type=str)
-    parser.add_argument('comment',default="",type=str)
-    parser.add_argument('scheduler',default='CosineAnnealingLR',type=str)
-    parser.add_argument('epochs',default=15,type=int)
-    parser.add_argument('n_fold',default=5,type=int)
-    parser.add_argument('backbone',default='efficientnet-b1',type=str)
-    parser.add_argument('fold_no',default=0,type=int)
+    parser.add_argument('--lr',default=2e-3,type=float)
+    parser.add_argument('--model_name',default="Unet",type=str)
+    parser.add_argument('--comment',default="",type=str)
+    parser.add_argument('--scheduler',default='CosineAnnealingLR',type=str)
+    parser.add_argument('--epochs',default=15,type=int)
+    parser.add_argument('--n_fold',default=5,type=int)
+    parser.add_argument('--backbone',default='efficientnet-b1',type=str)
+    parser.add_argument('--fold_no',default=0,type=int)
+    parser.add_argument('--seed',default=99,type=int)
     
     return parser
 
