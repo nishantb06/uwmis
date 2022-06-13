@@ -114,9 +114,9 @@ def prepare_loaders(fold,df,cfg, debug=False):
     train_dataset = BuildDataset(train_df, transforms=get_transforms(train = True,cfg = cfg))
     valid_dataset = BuildDataset(valid_df, transforms=get_transforms(train = False,cfg = cfg))
 
-    train_loader = DataLoader(train_dataset, batch_size=cfg.train_bs if not debug else 20, 
+    train_loader = DataLoader(train_dataset, batch_size=cfg.train_bs if not cfg.debug else 20, 
                               num_workers=4, shuffle=True, pin_memory=True, drop_last=False)
-    valid_loader = DataLoader(valid_dataset, batch_size=cfg.valid_bs if not debug else 20, 
+    valid_loader = DataLoader(valid_dataset, batch_size=cfg.valid_bs if not cfg.debug else 20, 
                               num_workers=4, shuffle=False, pin_memory=True)
     
     return train_loader, valid_loader
