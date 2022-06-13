@@ -28,23 +28,23 @@ def iou_coef(y_true, y_pred, thr=0.5, dim=(2,3), epsilon=0.001):
 def criterion(y_pred, y_true):
     return 0.5*BCELoss(y_pred, y_true) + 0.5*TverskyLoss(y_pred, y_true)
 
-def fetch_scheduler(optimizer):
-    if CFG.scheduler == 'CosineAnnealingLR':
-        scheduler = lr_scheduler.CosineAnnealingLR(optimizer,T_max=CFG.T_max, 
-                                                   eta_min=CFG.min_lr)
-    elif CFG.scheduler == 'CosineAnnealingWarmRestarts':
-        scheduler = lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=CFG.T_0, 
-                                                             eta_min=CFG.min_lr)
-    elif CFG.scheduler == 'ReduceLROnPlateau':
+def fetch_scheduler(optimizer,cfg):
+    if cfg.scheduler == 'CosineAnnealingLR':
+        scheduler = lr_scheduler.CosineAnnealingLR(optimizer,T_max=cfg.T_max, 
+                                                   eta_min=cfg.min_lr)
+    elif cfg.scheduler == 'CosineAnnealingWarmRestarts':
+        scheduler = lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0=cfg.T_0, 
+                                                             eta_min=cfg.min_lr)
+    elif cfg.scheduler == 'ReduceLROnPlateau':
         scheduler = lr_scheduler.ReduceLROnPlateau(optimizer,
                                                    mode='min',
                                                    factor=0.1,
                                                    patience=7,
                                                    threshold=0.0001,
-                                                   min_lr=CFG.min_lr,)
-    elif CFG.scheduer == 'ExponentialLR':
+                                                   min_lr=cfg.min_lr,)
+    elif cfg.scheduer == 'ExponentialLR':
         scheduler = lr_scheduler.ExponentialLR(optimizer, gamma=0.85)
-    elif CFG.scheduler == None:
+    elif cfg.scheduler == None:
         return None
         
     return scheduler

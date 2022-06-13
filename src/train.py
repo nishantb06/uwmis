@@ -8,7 +8,7 @@ from utils.config import CFG
 from utils.loss_func import criterion
 
 
-def train_one_epoch(model, optimizer, scheduler, dataloader, device, epoch):
+def train_one_epoch(model, optimizer, scheduler, dataloader, device, epoch,cfg):
     model.train()
     scaler = amp.GradScaler()
     
@@ -25,11 +25,11 @@ def train_one_epoch(model, optimizer, scheduler, dataloader, device, epoch):
         with amp.autocast(enabled=True):
             y_pred = model(images)
             loss   = criterion(y_pred, masks)
-            loss   = loss / CFG.n_accumulate
+            loss   = loss / cfg.n_accumulate
             
         scaler.scale(loss).backward()
     
-        if (step + 1) % CFG.n_accumulate == 0:
+        if (step + 1) % cfg.n_accumulate == 0:
             scaler.step(optimizer)
             scaler.update()
 

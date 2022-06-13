@@ -12,7 +12,7 @@ from utils.loss_func import criterion,dice_coef,iou_coef
 
 # optimizer will be added in the engine
 @torch.no_grad()
-def valid_one_epoch(model, dataloader, device, epoch,optimizer):
+def valid_one_epoch(model, dataloader, device, epoch,optimizer,cfg):
     model.eval()
     
     dataset_size = 0

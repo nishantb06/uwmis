@@ -15,7 +15,7 @@ from src.test import valid_one_epoch
 from src.dataloader import train_loader,valid_loader
 from utils.config import CFG
 
-def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_loader, valid_loader):
+def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_loader, valid_loader,cfg):
 
     # To automatically log gradients
     # wandb.watch(model, log_freq=100)
@@ -35,12 +35,12 @@ def run_training(model, optimizer, scheduler, device, num_epochs, fold, train_lo
         print(f'Epoch {epoch}/{num_epochs}', end='')
         train_loss = train_one_epoch(model, optimizer, scheduler, 
                                            dataloader=train_loader, 
-                                           device=CFG.device, epoch=epoch)
+                                           device=cfg.device, epoch=epoch,cfg=cfg)
         
         val_loss, val_scores = valid_one_epoch(model, valid_loader, 
-                                                 device=CFG.device, 
+                                                 device=cfg.device, 
                                                  epoch=epoch,
-                                                 optimizer=optimizer)
+                                                 optimizer=optimizer,cfg=cfg)
         val_dice, val_jaccard = val_scores
     
         history['Train Loss'].append(train_loss)
