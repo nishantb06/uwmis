@@ -51,7 +51,7 @@ def set_seed(seed = 42):
 #this line will go in main or doesnt have to if it prints seeding done.
 
 def initialise_config(args):
-    cfg = CFG(**args)
+    cfg = CFG(args)
     set_seed(cfg.seed)
     return cfg
 

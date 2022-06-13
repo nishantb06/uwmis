@@ -33,7 +33,7 @@ def get_args_parser():
 
 def main(args):
     print(type(args),args.debug)
-    cfg = initialise_config(debug = args.debug)
+    cfg = initialise_config(args)
     model = build_model(cfg)
     optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
     scheduler = fetch_scheduler(optimizer,cfg)
