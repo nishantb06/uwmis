@@ -36,6 +36,7 @@ def get_mask_paths():
     df = df.merge(df2, on=['id'])
     df['empty'] = (df.rle_len==0) # empty masks
 
+
     return df
 
 def get_mask_paths_25D():
@@ -68,6 +69,11 @@ def get_mask_paths_25D():
     df = df.drop(columns=['image_path','mask_path'])
     df = df.merge(path_df, on=['id'])
 
+    fault1 = 'case7_day0'
+    fault2 = 'case81_day30'
+    df = df[~df['id'].str.contains(fault1) & ~df['id'].str.contains(fault2)].reset_index(drop=True)
+    df.head()
+
     return df
 
 
@@ -79,12 +85,13 @@ def create_folds(df,cfg):
     return df
 
 class BuildDataset(torch.utils.data.Dataset):
-    def __init__(self, df, label=True, transforms=None):
+    def __init__(self, df, label=True, transforms=None,cfg= None):
         self.df         = df
         self.label      = label
         self.img_paths  = df['image_path'].tolist()
         self.msk_paths  = df['mask_path'].tolist()
         self.transforms = transforms
+        self.cfg = cfg
         
     def __len__(self):
         return len(self.df)
@@ -92,7 +99,7 @@ class BuildDataset(torch.utils.data.Dataset):
     def __getitem__(self, index):
         img_path  = self.img_paths[index]
         img = []
-        img = load_img(img_path)
+        img = load_img(img_path,self.cfg)
         
         if self.label:
             msk_path = self.msk_paths[index]
@@ -174,11 +181,11 @@ def prepare_loaders(fold,df,cfg, debug=False):
         valid_df = valid_df.head(32*3).query("empty==0")
 
     if cfg.two_half_D:
-        train_dataset = BuildDataset(train_df, transforms=get_transforms(train = True,cfg = cfg))
-        valid_dataset = BuildDataset(valid_df, transforms=get_transforms(train = False,cfg = cfg))
+        train_dataset = BuildDataset(train_df, transforms=get_transforms(train = True,cfg = cfg),cfg=cfg)
+        valid_dataset = BuildDataset(valid_df, transforms=get_transforms(train = False,cfg = cfg),cfg=cfg)
     else:
-        train_dataset = BuildDataset(train_df, transforms=get_transforms_25D(train = True,cfg = cfg))
-        valid_dataset = BuildDataset(valid_df, transforms=get_transforms_25D(train = False,cfg = cfg))
+        train_dataset = BuildDataset(train_df, transforms=get_transforms_25D(train = True,cfg = cfg),cfg=cfg)
+        valid_dataset = BuildDataset(valid_df, transforms=get_transforms_25D(train = False,cfg = cfg),cfg=cfg)
 
     train_loader = DataLoader(train_dataset, batch_size=cfg.train_bs if not cfg.debug else 20, 
                             num_workers=4, shuffle=True, pin_memory=True, drop_last=False)
