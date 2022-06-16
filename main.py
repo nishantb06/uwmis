@@ -9,7 +9,7 @@ from yaml import parse
 from models.unet import build_model
 from utils.config import CFG,initialise_config
 from utils.loss_func import fetch_scheduler
-from src.dataloader import prepare_loaders
+from src.dataloader import get_mask_paths_25D, prepare_loaders
 from src.engine import run_training
 from src.dataloader import create_folds,get_mask_paths
 
@@ -23,7 +23,8 @@ def get_args_parser():
     parser.add_argument('--comment',default="",type=str)
     parser.add_argument('--exp_name', default='Baselinev2', type=str)
     parser.add_argument('--model_name',default="Unet",type=str)
-    parser.add_argument('--backbone',default='efficientnet-b1',type=str)
+    parser.add_argument('--backbone',default='efficientnet-b1',type=str) # options  "mobilenet_v2" "efficientnet-b7"
+    #add argument for encoder weights
 
     parser.add_argument('--train_bs', default = 128, type= int)
     parser.add_argument('--epochs',default=15,type=int)
@@ -32,12 +33,14 @@ def get_args_parser():
 
     parser.add_argument('--n_fold',default=5,type=int)
     parser.add_argument('--fold_no',default=0,type=int)
+
+    parser.add_argument('--two_half_D',default=False,type=bool)
     
     return parser
 
 def main(args):
     cfg = initialise_config(args)
-    print(type(cfg),cfg.debug)
+    print(type(cfg),cfg.debug,cfg.two_half_D)
     model = build_model(cfg)
     optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
     scheduler = fetch_scheduler(optimizer,cfg)
@@ -53,7 +56,8 @@ def main(args):
         #                 group=CFG.comment,
         #                 )
         train_loader, valid_loader = prepare_loaders(fold=fold,
-                                    df = create_folds(get_mask_paths(),cfg),
+                                    df = create_folds(get_mask_paths(),cfg) if not cfg.two_half_D
+                                                            else create_folds(get_mask_paths_25D(),cfg),
                                     debug=args.debug,
                                     cfg=cfg)
 

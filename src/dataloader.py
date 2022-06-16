@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import torch 
 import cv2
+import glob
 
 from torch.utils.data import Dataset, DataLoader
 import albumentations as A
@@ -34,6 +35,36 @@ def get_mask_paths():
     df = df.groupby(['id']).head(1).reset_index(drop=True)
     df = df.merge(df2, on=['id'])
     df['empty'] = (df.rle_len==0) # empty masks
+
+    return df
+
+def get_mask_paths_25D():
+    try:
+        path_df = pd.DataFrame(glob('/kaggle/input/uwmgi-25d-stride2-dataset/images/images/*'), columns=['image_path'])
+        print("new Mask path file uploaded")
+    except:
+        print("change the mask path")
+    
+    path_df['mask_path'] = path_df.image_path.str.replace('image','mask')
+    path_df['id'] = path_df.image_path.map(lambda x: x.split('/')[-1].replace('.npy',''))
+
+    try:
+        df = pd.read_csv('../input/uwmgi-mask-dataset/train.csv')
+    except:
+        print("change the train_df path")
+    df['segmentation'] = df.segmentation.fillna('')
+    df['rle_len'] = df.segmentation.map(len) # length of each rle mask
+
+    df2 = df.groupby(['id'])['segmentation'].agg(list).to_frame().reset_index() # rle list of each id
+    df2 = df2.merge(df.groupby(['id'])['rle_len'].agg(sum).to_frame().reset_index()) # total length of all rles of each id
+
+    df = df.drop(columns=['segmentation', 'class', 'rle_len'])
+    df = df.groupby(['id']).head(1).reset_index(drop=True)
+    df = df.merge(df2, on=['id'])
+    df['empty'] = (df.rle_len==0) # empty masks
+
+    df = df.drop(columns=['image_path','mask_path'])
+    df = df.merge(path_df, on=['id'])
 
     return df
 
@@ -103,6 +134,34 @@ def get_transforms(train = True,cfg=None):
     else:
         return data_transforms['valid']
 
+
+def get_transforms_25D(train = True,cfg = None):
+    data_transforms = {
+        "train": A.Compose([
+    #         A.Resize(*CFG.img_size, interpolation=cv2.INTER_NEAREST),
+            A.HorizontalFlip(p=0.5),
+    #         A.VerticalFlip(p=0.5),
+            A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.05, rotate_limit=10, p=0.5),
+            A.OneOf([
+                A.GridDistortion(num_steps=5, distort_limit=0.05, p=1.0),
+    # #             A.OpticalDistortion(distort_limit=0.05, shift_limit=0.05, p=1.0),
+                A.ElasticTransform(alpha=1, sigma=50, alpha_affine=50, p=1.0)
+            ], p=0.25),
+            A.CoarseDropout(max_holes=8, max_height=cfg.img_size[0]//20, max_width=cfg.img_size[1]//20,
+                            min_holes=5, fill_value=0, mask_fill_value=0, p=0.5),
+            ], p=1.0),
+        
+        "valid": A.Compose([
+    #         A.Resize(*CFG.img_size, interpolation=cv2.INTER_NEAREST),
+            ], p=1.0)
+    }
+
+    if train==True:
+        return data_transforms["train"] 
+    else:
+        return data_transforms['valid']
+
+
 #change where this function is used also
 
 def prepare_loaders(fold,df,cfg, debug=False):
@@ -111,14 +170,20 @@ def prepare_loaders(fold,df,cfg, debug=False):
     if debug:
         train_df = train_df.head(32*5).query("empty==0")
         valid_df = valid_df.head(32*3).query("empty==0")
-    train_dataset = BuildDataset(train_df, transforms=get_transforms(train = True,cfg = cfg))
-    valid_dataset = BuildDataset(valid_df, transforms=get_transforms(train = False,cfg = cfg))
+
+    if cfg.two_half_D:
+        train_dataset = BuildDataset(train_df, transforms=get_transforms(train = True,cfg = cfg))
+        valid_dataset = BuildDataset(valid_df, transforms=get_transforms(train = False,cfg = cfg))
+    else:
+        train_dataset = BuildDataset(train_df, transforms=get_transforms_25D(train = True,cfg = cfg))
+        valid_dataset = BuildDataset(valid_df, transforms=get_transforms_25D(train = False,cfg = cfg))
 
     train_loader = DataLoader(train_dataset, batch_size=cfg.train_bs if not cfg.debug else 20, 
-                              num_workers=4, shuffle=True, pin_memory=True, drop_last=False)
+                            num_workers=4, shuffle=True, pin_memory=True, drop_last=False)
     valid_loader = DataLoader(valid_dataset, batch_size=cfg.valid_bs if not cfg.debug else 20, 
-                              num_workers=4, shuffle=False, pin_memory=True)
+                            num_workers=4, shuffle=False, pin_memory=True)
     
     return train_loader, valid_loader
+    
 
 # train_loader, valid_loader = prepare_loaders(fold=0,df = create_folds(get_mask_paths()),debug=True)

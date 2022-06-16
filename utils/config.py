@@ -11,13 +11,14 @@ class CFG:
 
         self.seed          = args.seed
         self.debug         = args.debug # set debug=False for Full Training
+        self.two_half_D    = args.two_half_D
         self.exp_name      = args.exp_name
         self.comment       = args.comment
         self.model_name    = args.model_name
         self.backbone      = args.backbone
-        self.train_bs      = args.train_bs
+        self.train_bs      = args.train_bs if not args.two_half_D else 64
         self.valid_bs      = self.train_bs*2
-        self.img_size      = [224, 224]
+        self.img_size      = [224, 224] if not args.two_half_D else [160, 192]
         self.epochs        = args.epochs
         self.lr            = args.lr
         self.scheduler     = args.scheduler
