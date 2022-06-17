@@ -59,7 +59,7 @@ def gray2rgb(mask):
     return rgb_mask[..., 1:].astype(mask.dtype)
 
 def load_img(path,cfg):
-    if cfg.two_half_D:
+    if not cfg.two_half_D:
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
         img = np.tile(img[...,None], [1, 1, 3]) # gray to rgb
         img = img.astype('float32') # original is uint16
@@ -74,7 +74,7 @@ def load_img(path,cfg):
         if mx:
             img/=mx # scale image to [0, 1]
         return img
-        
+
 def load_msk(path):
     msk = np.load(path)
     msk = msk.astype('float32')
