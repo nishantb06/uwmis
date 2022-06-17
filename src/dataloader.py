@@ -180,7 +180,7 @@ def prepare_loaders(fold,df,cfg, debug=False):
         train_df = train_df.head(32*5).query("empty==0")
         valid_df = valid_df.head(32*3).query("empty==0")
 
-    if cfg.two_half_D:
+    if not cfg.two_half_D:
         train_dataset = BuildDataset(train_df, transforms=get_transforms(train = True,cfg = cfg),cfg=cfg)
         valid_dataset = BuildDataset(valid_df, transforms=get_transforms(train = False,cfg = cfg),cfg=cfg)
     else:
