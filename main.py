@@ -19,6 +19,8 @@ def get_args_parser():
 
     parser.add_argument('--seed',default=101,type=int)
     parser.add_argument('--debug', default="False", type=str)
+    
+    parser.add_argument('--two_half_D',default="False",type= str)
 
     parser.add_argument('--comment',default="",type=str)
     parser.add_argument('--exp_name', default='Baselinev2', type=str)
@@ -34,7 +36,6 @@ def get_args_parser():
     parser.add_argument('--n_fold',default=5,type=int)
     parser.add_argument('--fold_no',default=0,type=int)
 
-    parser.add_argument('--two_half_D',default="False",type= str)
     
     return parser
 
@@ -44,7 +45,7 @@ def main(args):
     model = build_model(cfg)
     optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
     scheduler = fetch_scheduler(optimizer,cfg)
-    print(cfg.train_bs)
+
     for fold in range(cfg.fold_no,cfg.fold_no+1):
         print(f'#'*30)
         print(f'### Fold: {fold}')
@@ -58,7 +59,7 @@ def main(args):
         train_loader, valid_loader = prepare_loaders(fold=fold,
                                     df = create_folds(get_mask_paths(),cfg) if not cfg.two_half_D
                                                             else create_folds(get_mask_paths_25D(),cfg),
-                                    debug=args.debug,
+                                    debug=cfg.debug,
                                     cfg=cfg)
 
         model     = build_model(cfg=cfg)
