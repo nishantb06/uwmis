@@ -8,4 +8,5 @@
 
 ```
 !python3 /kaggle/working/uwmis/main.py --seed 2 --fold_no 2 
+!python3 /kaggle/working/uwmis/main.py --seed 2 --fold_no 2 --two_half_D True --debug True
 ```

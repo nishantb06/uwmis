@@ -18,7 +18,7 @@ def get_args_parser():
     parser = argparse.ArgumentParser('Set training/testing configuration', add_help=False)
 
     parser.add_argument('--seed',default=101,type=int)
-    parser.add_argument('--debug', default=False, type=bool)
+    parser.add_argument('--debug', default="False", type=str)
 
     parser.add_argument('--comment',default="",type=str)
     parser.add_argument('--exp_name', default='Baselinev2', type=str)
@@ -34,13 +34,13 @@ def get_args_parser():
     parser.add_argument('--n_fold',default=5,type=int)
     parser.add_argument('--fold_no',default=0,type=int)
 
-    parser.add_argument('--two_half_D',default=False,type=bool)
+    parser.add_argument('--two_half_D',default="False",type= str)
     
     return parser
 
 def main(args):
     cfg = initialise_config(args)
-    print(type(cfg),cfg.debug,cfg.two_half_D)
+    cfg.display()
     model = build_model(cfg)
     optimizer = optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.wd)
     scheduler = fetch_scheduler(optimizer,cfg)
