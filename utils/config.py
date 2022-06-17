@@ -15,11 +15,11 @@ class CFG:
         self.exp_name      = args.exp_name
         self.comment       = args.comment
         self.model_name    = args.model_name
-        self.backbone      = args.backbone
+        self.backbone      = args.backbone if not self.two_half_D else "efficientnet-b0"
         self.train_bs      = args.train_bs if not self.two_half_D else 64
         self.valid_bs      = self.train_bs*2
         self.img_size      = [224, 224] if not self.two_half_D else [160, 192]
-        self.epochs        = args.epochs
+        self.epochs        = args.epochs if not self.two_half_D else 5
         self.lr            = args.lr
         self.scheduler     = args.scheduler
         self.min_lr        = 1e-6
@@ -42,6 +42,8 @@ class CFG:
         print(f"train_bs is {self.train_bs}")
         print(f"img_size is {self.img_size}")
         print(f"fold_no is {self.fold_no}")
+        print(f"backbone is {self.backbone}")
+        print(f"epochs is {self.epochs}")
 
 
 
